@@ -1,0 +1,149 @@
+to set up sudo in wsl:
+go to command prompt and type wsl -l
+it will show you the list of wsl installed
+you must have root access to do the changes or ask admin to do it
+C:\Users\zoeba.sumbul>wsl -l
+Windows Subsystem for Linux Distributions:
+Ubuntu-18.04 (Default)
+Ubuntu-20.04
+
+C:\Users\zoeba.sumbul>wsl --set-default Ubuntu-20.04
+
+C:\Users\zoeba.sumbul>wsl -l
+Windows Subsystem for Linux Distributions:
+Ubuntu-20.04 (Default)
+Ubuntu-18.04
+
+made Ubunto-20.04 as your defailt.
+now proceed for password set up for sudo:
+C:\Users\zoeba.sumbul>wsl -d Ubuntu-20.04 -u root
+Welcome to Ubuntu 20.04.6 LTS (GNU/Linux 5.10.102.1-microsoft-standard-WSL2 x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/advantage
+
+  System information as of Tue Dec 30 06:22:44 IST 2025
+
+  System load:  0.02               Processes:             35
+  Usage of /:   0.7% of 250.98GB   Users logged in:       0
+  Memory usage: 9%                 IPv4 address for eth0: 172.21.93.26
+  Swap usage:   0%
+
+Expanded Security Maintenance for Applications is not enabled.
+
+0 updates can be applied immediately.
+
+Enable ESM Apps to receive additional future security updates.
+See https://ubuntu.com/esm or run: sudo pro status
+
+
+The list of available updates is more than a week old.
+To check for new updates run: sudo apt update
+
+
+This message is shown once a day. To disable it please create the
+/root/.hushlogin file.
+root@INLP47:/mnt/c/Users/zoeba.sumbul# passwd zoeba
+New password:
+Retype new password:
+passwd: password updated successfully
+root@INLP47:/mnt/c/Users/zoeba.sumbul# usermod -aG sudo zoeba
+root@INLP47:/mnt/c/Users/zoeba.sumbul# exit
+logout
+####################################################################
+SOP: Configure sudo Access in WSL (Ubuntu)
+Document Purpose
+
+This SOP describes the procedure to configure sudo access for a user in Windows Subsystem for Linux (WSL) running Ubuntu.
+
+Scope
+
+Applicable to:
+
+Windows systems with WSL installed
+
+Ubuntu distributions running under WSL
+
+Users requiring administrative (sudo) privileges inside WSL
+
+Prerequisites
+
+WSL is installed and functional
+
+User has root access inside WSL
+(If root access is unavailable, the steps must be performed by an administrator)
+
+Procedure
+Step 1: Identify Installed WSL Distributions
+
+Open Command Prompt and run:
+
+wsl -l
+
+
+Example output:
+
+Windows Subsystem for Linux Distributions:
+Ubuntu-18.04 (Default)
+Ubuntu-20.04
+
+Step 2: Set Ubuntu-20.04 as Default Distribution (Recommended)
+wsl --set-default Ubuntu-20.04
+
+
+Verify:
+
+wsl -l
+
+
+Expected output:
+
+Windows Subsystem for Linux Distributions:
+Ubuntu-20.04 (Default)
+Ubuntu-18.04
+
+Step 3: Login to Ubuntu as Root
+wsl -d Ubuntu-20.04 -u root
+
+
+Successful login prompt:
+
+root@<hostname>:#
+
+Step 4: Set / Reset User Password
+
+Execute the following command inside the root shell:
+
+passwd zoeba
+
+
+Enter the new password
+
+Re-enter to confirm
+(Password characters will not be displayed)
+
+Step 5: Grant sudo Privileges
+usermod -aG sudo zoeba
+
+Step 6: Exit Root Session
+exit
+###############################################################################
+SOP TO INSTALL DOCKER
+sudo su
+apt update
+apt install -y
+mkdir -p /etc/apt/keyrings
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmour -o /etc/apt/keyrings/docker.gpg
+echo \
+  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
+  $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+# Install Docker Engine and CLI
+sudo apt update
+sudo apt install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+
+# Add your user to the docker group (so you can run docker without sudo)
+sudo usermod -aG docker $USER
+service docker start
+service docker status
